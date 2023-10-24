@@ -9,12 +9,17 @@ recognition.onresult = (event) => {
     const word = transcript.toLowerCase();
     const phrase = word.split(" ");
     const numbersArray = Array.from({ length: 32 }, (_, i) => (i + 1).toString());
+    var numberStringArray = [ "bir","iki","üç","dört","beş","altı","yedi","sekiz","dokuz","on","onbir","oniki","onüç","ondört","onbeş","onaltı","onyedi","onsekiz",
+    "ondokuz","yirmi","yirmibir","yirmiiki","yirmiüç","yirmidört","yirmibeş","yirmialtı","yirmiyedi","yirmisekiz","yirmidokuz","otuz"];
+    
     removeEmptyStringsFromArray(phrase)
-    if (numbersArray.includes(phrase[0]) && checkForWord(phrase[1])) {
+    console.log(phrase[0])
+    checkIfContinue(phrase[0]);
+    if ((numbersArray.includes(phrase[0].toLowerCase()) || numberStringArray.includes(phrase[0].toLowerCase())) && checkForWord(phrase[1])) {
         const color = getColorForNumber(phrase[1]);
         paint(phrase[0],color);
-    }
-}
+    };
+};
 
 function getColorForNumber(word) {
     if(word === "çürük"){
@@ -37,8 +42,13 @@ function checkForWord(word) {
         return true;
     }else if(word === "dolgu"){
         return true;
+    }return false;
+}
+
+function checkIfContinue(word){
+    if(word.toLowerCase() === "durdur"){
+        recognition.stop();
     }
-    return false;
 }
 
 const startButton = document.getElementById('start-button');
