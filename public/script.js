@@ -9,49 +9,45 @@ recognition.onresult = (event) => {
     const word = transcript.toLowerCase();
     const phrase = word.split(" ");
     const numbersArray = Array.from({ length: 32 }, (_, i) => (i + 1).toString());
-    console.log(phrase)
     removeEmptyStringsFromArray(phrase)
-    console.log(phrase)
-
-    if (numbersArray.includes(phrase[0])) {
-        console.log(`Girilen değer: ${phrase[0]}`);
+    if (numbersArray.includes(phrase[0]) && checkForWord(phrase[1])) {
         const color = getColorForNumber(phrase[1]);
-        changeSquareColor(phrase[0], color,phrase);
+        paint(phrase[0],color);
     }
 }
 
 function getColorForNumber(word) {
     if(word === "çürük"){
-        return "red";
+        return "black";
     }else if(word === "sağlam"){
-        return;
+        return "green";
     }else if(word === "kanal"){
-        return "blue";
+        return "red";
     }else if(word === "dolgu"){
-        return "yellow";
+        return "blue";
     }
 }
 
-function changeSquareColor(number, color,word) {
-    const squareId = `square${number}`;
-    console.log("id = "+squareId);
-    console.log(color)
-    const square = document.getElementById(squareId);
-    let text = word[1];
-    if(word[2]){
-        text +=" "+word[2];
+function checkForWord(word) {
+    if(word === "çürük"){
+        return true;
+    }else if(word === "sağlam"){
+        return true;
+    }else if(word === "kanal"){
+        return true;
+    }else if(word === "dolgu"){
+        return true;
     }
-    if (square) {
-        document.getElementById("square121").style.display = "block";
-        document.getElementById("square12").style.display = "none";
-        // square.style.backgroundColor = color;
-        // square.innerText = number +" "+ text; 
-    }
+    return false;
 }
 
 const startButton = document.getElementById('start-button');
 const squareContainer = document.getElementById('square-container');
+const stopButton = document.getElementById('stop-button');
 
+stopButton.addEventListener('click', () => {
+    recognition.stop();
+});
 startButton.addEventListener('click', () => {
     recognition.start();
 });
@@ -65,22 +61,30 @@ function removeEmptyStringsFromArray(arr) {
     return arr;
 }
 
-// function createSquare(color, text) {
-//     const square = document.createElement('div');
-//     square.className = 'square';
-//     square.style.backgroundColor = color;
 
-//     // Sayıyı ve kelimeyi al
-//     const lastWord = getLastWord();
-//     if (lastWord && !isNaN(lastWord)) {
-//         square.innerText = lastWord + ' - ' + text;
-//     } else {
-//         square.innerText = text;
-//     }
-//     squareContainer.appendChild(square);
-// }
 
-// function getLastWord() {
-//     const words = document.getElementById('text-output').value.split(' ');
-//     return words[words.length - 2];
-// }
+function paint(numbers,color){
+        const image = document.getElementById("image");
+        const pointX = [103, 107, 107, 110, 126, 140, 180, 214, 265, 311, 347, 362, 377, 381, 385, 385, 388, 378, 368, 355, 340, 316, 289, 263, 231, 196, 169, 146, 136, 119, 109, 96];
+        const pointY = [340, 291, 243, 198, 153, 125, 95, 70, 70, 87, 121, 156, 197, 245, 294, 338, 447, 500, 546, 580, 611, 639, 659, 675, 675, 659, 640, 616, 586, 539, 496, 445];
+        
+        const number = numbers;
+        if (!isNaN(number) && number >= 1 && number <= pointX.length) {
+
+            const x = pointX[number - 1];
+            const y = pointY[number - 1];
+            drawBlackSquare(x, y,color);
+        }
+    
+        function drawBlackSquare(x, y,color) {
+            const canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, image.width, image.height);
+            context.fillStyle = color;
+            context.fillRect(x, y, 10, 10); // 10x10 piksel siyah kare çizimi
+            image.src = canvas.toDataURL("image/png");
+        }
+}
+
