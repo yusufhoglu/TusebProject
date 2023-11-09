@@ -8,14 +8,12 @@ recognition.onresult = (event) => {
     textOutput.value += transcript;
     const word = transcript.toLowerCase();
     const phrase = word.split(" ");
-    const numbersArray = Array.from({ length: 32 }, (_, i) => (i + 1).toString());
-    var numberStringArray = [ "bir","iki","üç","dört","beş","altı","yedi","sekiz","dokuz","on","onbir","oniki","onüç","ondört","onbeş","onaltı","onyedi","onsekiz",
-    "ondokuz","yirmi","yirmibir","yirmiiki","yirmiüç","yirmidört","yirmibeş","yirmialtı","yirmiyedi","yirmisekiz","yirmidokuz","otuz"];
-    
+    const numbersArray =["18","17","16","15","14","13","12","11","21","22","23","24","25","26","27","28","48","47","46"
+        ,"45","44","43","42","41","31","32","33","34","35","36","37","38"];
     removeEmptyStringsFromArray(phrase)
-    console.log(phrase[0])
     checkIfContinue(phrase[0]);
-    if ((numbersArray.includes(phrase[0].toLowerCase()) || numberStringArray.includes(phrase[0].toLowerCase())) && checkForWord(phrase[1])) {
+    if ((numbersArray.includes(phrase[0].toLowerCase())) && checkForWord(phrase[1])) {
+        phrase[0] = numberToText(phrase[0]);
         const color = getColorForNumber(phrase[1]);
         paint(phrase[0],color);
     };
@@ -71,30 +69,54 @@ function removeEmptyStringsFromArray(arr) {
     return arr;
 }
 
+function numberToText(number){
+    console.log("number içine girdi:"+number);
+    var text = "";
+    switch(Math.floor(number/10)) {
+        case 1:
+          text+="on";
+          break;
+        case 2:
+          text+="yirmi";
+          break;
+        case 3:
+          text+="otuz";
+    }
+    switch(number%10){
+        case 1:
+            text+="-bir"
+            break;
+        case 2:
+            text+="-iki";
+        break;  
+        case 3:
+            text+="-üç";
+        break;
+        case 4:
+            text+="-dört";
+        break;
+        case 5:
+            text+="-beş";
+        break;
+        case 6:
+            text+="-altı";
+        break;
+        case 7:
+            text+="-yedi";
+        break;
+        case 8:
+            text+="-sekiz";
+        break;
+    }
+    return text;
+};
 
+function textToNumber(text){
+    //GEREK YOK GİBİ! 
+    //API DEVAMLI SAYI OLARAK YAZIYOR (STRİNG DEĞİL)
+};
 
 function paint(numbers,color){
-        const image = document.getElementById("image");
-        const pointX = [103, 107, 107, 110, 126, 140, 180, 214, 265, 311, 347, 362, 377, 381, 385, 385, 388, 378, 368, 355, 340, 316, 289, 263, 231, 196, 169, 146, 136, 119, 109, 96];
-        const pointY = [340, 291, 243, 198, 153, 125, 95, 70, 70, 87, 121, 156, 197, 245, 294, 338, 447, 500, 546, 580, 611, 639, 659, 675, 675, 659, 640, 616, 586, 539, 496, 445];
-        
-        const number = numbers;
-        if (!isNaN(number) && number >= 1 && number <= pointX.length) {
-
-            const x = pointX[number - 1];
-            const y = pointY[number - 1];
-            drawBlackSquare(x, y,color);
-        }
-    
-        function drawBlackSquare(x, y,color) {
-            const canvas = document.createElement("canvas");
-            canvas.width = image.width;
-            canvas.height = image.height;
-            const context = canvas.getContext("2d");
-            context.drawImage(image, 0, 0, image.width, image.height);
-            context.fillStyle = color;
-            context.fillRect(x, y, 10, 10); // 10x10 piksel siyah kare çizimi
-            image.src = canvas.toDataURL("image/png");
-        }
+        document.getElementById(numbers).style.backgroundColor = color;
 }
 
